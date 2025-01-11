@@ -67,13 +67,12 @@ def prepare_questions(questions):
         answers = q['incorrect_answers'] + [q['correct_answer']]
         random.shuffle(answers)
         q['answers'] = answers
-        
-        # keep only the question, answers and correct answer
+
+        # keep only the question, answers, difficulty and correct answer
         q.pop('incorrect_answers')
         q.pop('category')
-        q.pop('difficulty')
         q.pop('type')
-    
+
     return questions
 
 
@@ -114,15 +113,51 @@ def correct_answer(question, answer) -> bool:
     return question['correct_answer'] == answer
 
 
+def fifty_fifty(question):
+    answers = question['answers']
+    correct_answer = question['correct_answer']
+    answers.remove(correct_answer)
+    question['answers'] = [correct_answer, random.choice(answers)]
+    return question
+
+
+def ask_a_friend(question):
+    return question["correct_answer"]
+
+
+def audience_poll(question):
+    weights = {}
+    percentage = 100
+
+    if question['difficulty'] == 'easy':    
+        weights[question['correct_answer']] = random.randint(90, 100)
+    elif question['difficulty'] == 'medium':
+        weights[question['correct_answer']] = random.randint(70, 90)
+    elif question['difficulty'] == 'hard':
+        weights[question['correct_answer']] = random.randint(40, 70)
+
+    percentage -= weights[question['correct_answer']]
+
+    for answer in question['answers']:
+        if answer != question['correct_answer']:
+            if len(weights) < 3:
+                weights[answer] = random.randint(0, percentage)
+                percentage -= weights[answer]
+            else:
+                weights[answer] = percentage
+
+    return weights
+
+
 def main():
     questions = gen_normal_mode()
     for q in questions:
         print(q['question'])
-        for i, a in enumerate(q['answers']):
-            print(f"{i + 1}. {a}")
-        print()
+        print(audience_poll(q))
+        # for i, a in enumerate(q['answers']):
+        #     print(f"{i + 1}. {a}")
+        # print()
 
 
 if __name__ == "__main__":
     main()
-    
