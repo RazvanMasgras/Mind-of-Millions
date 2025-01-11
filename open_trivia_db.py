@@ -121,7 +121,7 @@ def fifty_fifty(question):
     return question
 
 
-def ask_a_friend(question):
+def phone_a_friend(question):
     return question["correct_answer"]
 
 
@@ -129,7 +129,7 @@ def audience_poll(question):
     weights = {}
     percentage = 100
 
-    if question['difficulty'] == 'easy':    
+    if question['difficulty'] == 'easy':
         weights[question['correct_answer']] = random.randint(90, 100)
     elif question['difficulty'] == 'medium':
         weights[question['correct_answer']] = random.randint(70, 90)
@@ -149,15 +149,13 @@ def audience_poll(question):
     return weights
 
 
-def main():
-    questions = gen_normal_mode()
-    for q in questions:
-        print(q['question'])
-        print(audience_poll(q))
-        # for i, a in enumerate(q['answers']):
-        #     print(f"{i + 1}. {a}")
-        # print()
+def change_question(questions, question):
+    while True:
+        try:
+            new_question = fetch_trivia_questions(questions=1, difficulty=question["difficulty"])[0]
+            break
+        except NoResponseException as e:
+            continue
 
-
-if __name__ == "__main__":
-    main()
+    questions.insert(questions.index(question), new_question)
+    return questions
