@@ -91,6 +91,25 @@ def gen_normal_mode():
     return prepare_questions(questions)
 
 
+def gen_endless_mode(categories=None, difficulty=None):
+    questions = []
+
+    if categories is None:
+        questions.extend(fetch_trivia_questions(questions=50, difficulty=difficulty))
+    else:
+        for category in categories:
+            while True:
+                try:
+                    questions.extend(fetch_trivia_questions(questions=10, category=category, difficulty=difficulty))
+                    break
+                except NoResponseException as e:
+                    continue
+
+    random.shuffle(questions)
+
+    return prepare_questions(questions)
+
+
 def correct_answer(question, answer) -> bool:
     return question['correct_answer'] == answer
 
@@ -106,3 +125,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
