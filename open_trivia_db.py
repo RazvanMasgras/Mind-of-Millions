@@ -153,10 +153,11 @@ def fifty_fifty(question):
     answers = question['answers']
     correct_answer = question['correct_answer']
     incorrect_answer = random.choice([a for a in answers if a != correct_answer])
-    for a in answers:
-        if a != correct_answer and a != incorrect_answer:
-            answers[a] = ""
-            break 
+
+    for i in range(len(answers)):
+        if answers[i] != correct_answer and answers[i] != incorrect_answer:
+            answers[i] = ""
+
     return question
 
 
