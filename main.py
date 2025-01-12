@@ -29,13 +29,16 @@ wrong_answer = pygame.mixer.Sound("wrong_answer.mp3")
 correct_answer = pygame.mixer.Sound("correct_answer.mp3")
 final_answer = pygame.mixer.Sound("final_answer.mp3")
 question_sound = pygame.mixer.Sound("question_sound.mp3")
-win_song = pygame.mixer.Sound("win_song.mp3")
 
 # Screen settings
 SCREEN = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption("Mind of Millions")
 
+
 def loading_screen(mode, categories=None, difficulty=None):
+    pygame.mixer.music.load("main_menu_song.mp3")
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
     background = pygame.image.load("background.jpg")
     background = pygame.transform.scale(background, (1920, 1080))
     loading = pygame.image.load("loading.png")
@@ -43,6 +46,7 @@ def loading_screen(mode, categories=None, difficulty=None):
     SCREEN.blit(background, (0, 0))
     SCREEN.blit(loading, (170, -50))
     pygame.display.flip()
+    
     if mode == "classic":
         questions = open_trivia_db.gen_normal_mode()
     elif mode == "endless":
@@ -50,8 +54,8 @@ def loading_screen(mode, categories=None, difficulty=None):
             questions = open_trivia_db.gen_endless_mode(difficulty=difficulty)
         else:
             questions = open_trivia_db.gen_endless_mode(categories, difficulty)
+    pygame.mixer.music.stop()
     return play_menu(questions, mode)
-    
     
 def answer_clicked(button, is_correct):
     answer_surface = pygame.image.load("answer_button.png")
@@ -300,7 +304,9 @@ def play_menu(questions, mode):
                     pygame.event.clear()
 
 def win_screen():
-    win_song.play()
+    pygame.mixer.music.load("win_song.mp3")
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
     background = pygame.image.load("background.jpg")
     background = pygame.transform.scale(background, (1920, 1080))
     win = pygame.image.load("win.png")
@@ -318,11 +324,11 @@ def win_screen():
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                win_song.stop()
+                pygame.mixer.music.stop()
                 return main_menu()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.check_for_input(pygame.mouse.get_pos()):
-                    win_song.stop()
+                    pygame.mixer.music.stop()
                     pygame.event.clear()
                     return main_menu()   
 
@@ -550,6 +556,10 @@ def lose_screen(mode):
                     return loading_screen("classic")
 
 def main_menu():
+    pygame.mixer.music.load("main_menu_song.mp3")
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play()
+    
     button_surface = pygame.image.load("button.png")
     button_surface = pygame.transform.scale(button_surface, (530, 100))
 
@@ -580,7 +590,9 @@ def main_menu():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.check_for_input(MOUSE_POS):
                     pygame.event.clear()
+                    pygame.mixer.music.stop()
                     return loading_screen("classic")
+
                 elif exit_button.check_for_input(MOUSE_POS):
                     pygame.event.clear()
                     pygame.quit()
