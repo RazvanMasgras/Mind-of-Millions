@@ -28,6 +28,7 @@ pygame.mixer.init()
 wrong_answer = pygame.mixer.Sound("wrong_answer.mp3")
 correct_answer = pygame.mixer.Sound("correct_answer.mp3")
 final_answer = pygame.mixer.Sound("final_answer.mp3")
+question_sound = pygame.mixer.Sound("question_sound.mp3")
 
 # Screen settings
 SCREEN = pygame.display.set_mode((1920, 1080))
@@ -80,6 +81,7 @@ def answer_clicked(button, is_correct):
     pygame.display.flip()
 
 def display_next_question(question, button1, button2, button3, button4):
+    question_sound.play().fadeout(4500)
     answers = question["answers"]
     button1.change_text(answers[0])
     button2.change_text(answers[1])
