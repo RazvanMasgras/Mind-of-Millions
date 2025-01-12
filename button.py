@@ -10,6 +10,7 @@ class Button():
         self.font = font
         self.text = font.render(self.text_input, True, "white")
         self.text_rect = self.text.get_rect(center=(self.x, self.y))
+        self.used = False
 
     def update(self, screen):
         screen.blit(self.image, self.rect)
@@ -30,6 +31,11 @@ class Button():
     def change_image(self, new_image):
         self.image = new_image
         self.rect = self.image.get_rect(center=(self.x, self.y))
+
+    def change_text(self, new_text):
+        self.text_input = new_text
+        self.text = self.font.render(self.text_input, True, "white")
+        self.text_rect = self.text.get_rect(center=(self.x, self.y))
         
 
 def render_text_box(screen, text, box_rect, font_name="arial", max_font_size=50, min_font_size=20, wrap_limit=5):
