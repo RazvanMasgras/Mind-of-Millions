@@ -187,21 +187,6 @@ def audience_poll(question):
             else:
                 weights[answer] = percentage
 
-    labels = ['A', 'B', 'C', 'D']
-    plt.bar(labels, weights.values())
-
-    for i, (key, value) in enumerate(weights.items()):
-        plt.text(i, value + 1, str(value), ha='center', color='white')
-
-    plt.gca().axes.get_yaxis().set_visible(False)
-
-    for spine in plt.gca().spines.values():
-        spine.set_visible(False)
-
-    plt.gca().tick_params(axis='x', colors='white')
-
-    plt.savefig("audience_poll.png", transparent=True)
-
     return weights
 
 
