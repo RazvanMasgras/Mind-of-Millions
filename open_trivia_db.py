@@ -152,8 +152,11 @@ def correct_answer(question, answer) -> bool:
 def fifty_fifty(question):
     answers = question['answers']
     correct_answer = question['correct_answer']
-    answers.remove(correct_answer)
-    question['answers'] = [correct_answer, random.choice(answers)]
+    incorrect_answer = random.choice([a for a in answers if a != correct_answer])
+    for a in answers:
+        if a != correct_answer and a != incorrect_answer:
+            answers[a] = ""
+            break 
     return question
 
 
