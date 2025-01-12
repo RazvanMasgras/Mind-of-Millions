@@ -157,5 +157,5 @@ def change_question(questions, question):
         except NoResponseException as e:
             continue
 
-    questions.insert(questions.index(question), new_question)
+    questions[questions.index(question)] = new_question
     return questions
