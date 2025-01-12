@@ -36,6 +36,15 @@ pygame.display.set_caption("Mind of Millions")
 
 
 def loading_screen(mode, categories=None, difficulty=None):
+    """
+    Displays a loading screen with background music and image, and generates questions based on the selected mode.
+    Args:
+        mode (str): The game mode, either "classic" or "endless".
+        categories (list, optional): A list of categories for the endless mode. Defaults to None.
+        difficulty (str, optional): The difficulty level for the endless mode. Defaults to None.
+    Returns:
+        list: A list of questions generated based on the selected mode.
+    """
     pygame.mixer.music.load("main_menu_song.mp3")
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
@@ -58,6 +67,22 @@ def loading_screen(mode, categories=None, difficulty=None):
     return play_menu(questions, mode)
     
 def answer_clicked(button, is_correct):
+    """
+    Handles the visual and audio feedback when an answer button is clicked.
+
+    Args:
+        button (Button): The button that was clicked.
+        is_correct (bool): Indicates whether the clicked answer is correct.
+
+    This function performs the following steps:
+    1. Loads and scales the images for different button states (answer, waiting, correct, incorrect).
+    2. Changes the button image to the waiting state and updates the display.
+    3. Plays the final answer sound and waits for 2.5 seconds.
+    4. Plays the correct or wrong answer sound based on the `is_correct` flag.
+    5. Flashes the button image between the correct/incorrect state and the original state three times.
+    6. Changes the button image to the final correct/incorrect state and waits for 1.8 seconds.
+    7. Resets the button image to the original state.
+    """
     answer_surface = pygame.image.load("answer_button.png")
     answer_surface = pygame.transform.scale(answer_surface, (615, 50))
     waiting_surface = pygame.image.load("waiting_answer_button.png")
@@ -93,6 +118,20 @@ def answer_clicked(button, is_correct):
     pygame.display.flip()
 
 def display_next_question(question, button1, button2, button3, button4):
+    """
+    Updates the display with the next question and its corresponding answer buttons.
+
+    Args:
+        question (dict): A dictionary containing the question and its answers.
+                         Expected to have a key "answers" with a list of answer strings.
+        button1 (Button): The first answer button to be updated.
+        button2 (Button): The second answer button to be updated.
+        button3 (Button): The third answer button to be updated.
+        button4 (Button): The fourth answer button to be updated.
+
+    Returns:
+        None
+    """
     question_sound.play().fadeout(4500)
     answers = question["answers"]
     button1.change_text(answers[0])
@@ -106,11 +145,31 @@ def display_next_question(question, button1, button2, button3, button4):
     pygame.display.flip()
 
 def display_text(text, font, color, position):
+    """
+    Renders and displays text on the screen at a specified position.
+
+    Args:
+        text (str): The text to be displayed.
+        font (pygame.font.Font): The font object used to render the text.
+        color (tuple): The color of the text in RGB format.
+        position (tuple): The (x, y) coordinates where the text will be displayed on the screen.
+
+    Returns:
+        None
+    """
     text_surface = font.render(text, True, color)
     SCREEN.blit(text_surface, position)
     pygame.display.flip()
 
 def display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_button):
+    """
+    Updates the display for the lifeline buttons and refreshes the screen.
+
+    Args:
+        fifty_fifty_button: The button object for the 50/50 lifeline.
+        phone_a_friend_button: The button object for the Phone a Friend lifeline.
+        audience_poll_button: The button object for the Audience Poll lifeline.
+    """
     fifty_fifty_button.update(SCREEN)
     phone_a_friend_button.update(SCREEN)
     audience_poll_button.update(SCREEN)
@@ -290,18 +349,33 @@ def play_menu(questions, mode):
                     used_surface = pygame.image.load("used_phone-a-friend.png")
                     used_surface = pygame.transform.scale(used_surface, (100, 100))
                     phone_a_friend_button.change_image(used_surface)
-                    display_text("Your friend says: " + open_trivia_db.phone_a_friend(question), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 200))
+                    button.render_text_box(SCREEN, "Your friend says the correct answer is: ", (450, 530, 1000, 100))
+                    # display_text(,
+                    #                 pygame.font.Font("freesansbold.ttf", 40),
+                    #                 "white",
+                    #                 (550, 600))
+                    button.render_text_box(SCREEN, open_trivia_db.phone_a_friend(question), (450, 580, 1000, 100))
+                    # display_text(open_trivia_db.phone_a_friend(question),
+                    #                 pygame.font.Font("freesansbold.ttf", 40),
+                    #                 "white",
+                    #                 (550, 650))
                     pygame.event.clear()
                 elif audience_poll_button.check_for_input(MOUSE_POS) and not audience_poll_button.used:
                     audience_poll_button.used = True
                     used_surface = pygame.image.load("used_ask-the-audience.png")
                     used_surface = pygame.transform.scale(used_surface, (100, 100))
                     audience_poll_button.change_image(used_surface)
+                    
                     weights = open_trivia_db.audience_poll(question)
-                    display_text("Audience poll results:", pygame.font.Font("freesansbold.ttf", 50), "white", (750, 200))
-                    for answer, weight in weights.items():
-                        display_text(answer + ": " + str(weight) + "%", pygame.font.Font("freesansbold.ttf", 50), "white", (750, 250 + list(weights.keys()).index(answer) * 50))
+                    variants = ("A", "B", "C", "D")
+                    display_text("Audience poll results:", pygame.font.Font("freesansbold.ttf", 30), "white", (350, 260))
+                    for i in range(4):
+                        pygame.draw.rect(SCREEN, (136, 6, 206), (375 + i * 70, 500 - weights[question["answers"][i]] * 2, 50, weights[question["answers"][i]] * 2))
+                        display_text(variants[i], pygame.font.Font("freesansbold.ttf", 30), "white", (390 + i * 70, 515))
+
+                    pygame.display.flip()
                     pygame.event.clear()
+                    
 
 def win_screen():
     pygame.mixer.music.load("win_song.mp3")
@@ -592,7 +666,6 @@ def main_menu():
                     pygame.event.clear()
                     pygame.mixer.music.stop()
                     return loading_screen("classic")
-
                 elif exit_button.check_for_input(MOUSE_POS):
                     pygame.event.clear()
                     pygame.quit()
