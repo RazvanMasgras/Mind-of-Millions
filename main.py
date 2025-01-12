@@ -24,6 +24,10 @@ TEXT_BOX = (400, 680, 1100, 90)
 
 # Initialize pygame
 pygame.init()
+pygame.mixer.init()
+wrong_answer = pygame.mixer.Sound("wrong_answer.mp3")
+correct_answer = pygame.mixer.Sound("correct_answer.mp3")
+final_answer = pygame.mixer.Sound("final_answer.mp3")
 
 # Screen settings
 SCREEN = pygame.display.set_mode((1920, 1080))
@@ -52,7 +56,12 @@ def answer_clicked(button, is_correct):
     button.change_image(waiting_surface)
     button.update(SCREEN)
     pygame.display.flip()
-    pygame.time.delay(1000)
+    final_answer.play().fadeout(2500)
+    pygame.time.delay(2500)
+    if not is_correct:
+        wrong_answer.play().fadeout(3000)
+    else:
+        correct_answer.play().fadeout(3000)
     for _ in range(3):
         button.change_image(correct_surface if is_correct else incorrect_surface)
         button.update(SCREEN)
@@ -188,7 +197,7 @@ def play_menu(questions):
                         display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
                         display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
                         display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_button)
-                    else :
+                    else:
                         return lose_screen()
                 elif button3.check_for_input(MOUSE_POS):
                     is_correct = open_trivia_db.correct_answer(question, answers[2])
