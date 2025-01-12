@@ -27,6 +27,8 @@ class Button():
                 self.text = self.font.render(self.text_input, True, "grey")
             else:
                 self.text = self.font.render(self.text_input, True, "white")
+        else:
+            self.text = self.font.render(self.text_input, True, "white")
 
     def change_image(self, new_image):
         self.image = new_image
