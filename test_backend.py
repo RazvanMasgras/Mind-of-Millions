@@ -12,10 +12,11 @@ def test_fifty_fifty():
 
     result = fifty_fifty(question)
 
-    assert len(result['answers']) == 2
+    assert len(result['answers']) == 4
     assert 'Paris' in result['answers']
-    assert result['answers'][0] == 'Paris' or result['answers'][1] == 'Paris'
-    assert result['answers'][0] != result['answers'][1]
+    assert result['answers'].count('') == 2
+    assert result['answers'].count('Paris') == 1
+    assert result['answers'].count('London') + result['answers'].count('Berlin') + result['answers'].count('Madrid') == 1
 
 
 def test_audience_poll_easy():
