@@ -154,7 +154,7 @@ def change_question(questions, question):
         try:
             new_question = fetch_trivia_questions(questions=1, difficulty=question["difficulty"])[0]
             break
-        except NoResponseException as e:
+        except NoResponseException as exception:
             continue
 
     questions[questions.index(question)] = new_question

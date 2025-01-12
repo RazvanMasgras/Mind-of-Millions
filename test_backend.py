@@ -1,4 +1,4 @@
-from open_trivia_db import fifty_fifty, audience_poll, change_question
+from open_trivia_db import fifty_fifty, audience_poll, change_question, correct_answer
 
 
 def test_fifty_fifty():
@@ -86,3 +86,25 @@ def test_change_question():
     assert original_question not in updated_questions
     assert updated_questions[0]['question'] != original_question['question']
     assert updated_questions[0]['difficulty'] == original_question['difficulty']
+
+
+def test_correct_answer_true():
+    question = {
+        'question': 'What is the capital of France?',
+        'correct_answer': 'Paris',
+        'answers': ['London', 'Berlin', 'Madrid', 'Paris'],
+        'difficulty': 'easy'
+    }
+    answer = 'Paris'
+    assert correct_answer(question, answer) == True
+
+
+def test_correct_answer_false():
+    question = {
+        'question': 'What is the capital of France?',
+        'correct_answer': 'Paris',
+        'answers': ['London', 'Berlin', 'Madrid', 'Paris'],
+        'difficulty': 'easy'
+    }
+    answer = 'London'
+    assert correct_answer(question, answer) == False
