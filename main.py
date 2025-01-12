@@ -29,6 +29,7 @@ wrong_answer = pygame.mixer.Sound("wrong_answer.mp3")
 correct_answer = pygame.mixer.Sound("correct_answer.mp3")
 final_answer = pygame.mixer.Sound("final_answer.mp3")
 question_sound = pygame.mixer.Sound("question_sound.mp3")
+win_song = pygame.mixer.Sound("win_song.mp3")
 
 # Screen settings
 SCREEN = pygame.display.set_mode((1920, 1080))
@@ -161,6 +162,7 @@ def play_menu(questions):
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                pygame.event.clear()
                 return main_menu()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Detect clicks on buttons
@@ -275,6 +277,7 @@ def play_menu(questions):
                     pygame.event.clear()
 
 def win_screen():
+    win_song.play()
     background = pygame.image.load("background.jpg")
     background = pygame.transform.scale(background, (1920, 1080))
     win = pygame.image.load("win.png")
@@ -292,9 +295,11 @@ def win_screen():
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                win_song.stop()
                 return main_menu()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.check_for_input(pygame.mouse.get_pos()):
+                    win_song.stop()
                     pygame.event.clear()
                     return main_menu()   
 
@@ -370,4 +375,5 @@ def main_menu():
         pygame.display.flip()
 
 if __name__ == "__main__":
-    main_menu()
+    # 
+    win_screen()
