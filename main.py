@@ -35,7 +35,7 @@ win_song = pygame.mixer.Sound("win_song.mp3")
 SCREEN = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption("Mind of Millions")
 
-def loading_screen():
+def loading_screen(mode, categories=None, difficulty=None):
     background = pygame.image.load("background.jpg")
     background = pygame.transform.scale(background, (1920, 1080))
     loading = pygame.image.load("loading.png")
@@ -43,8 +43,15 @@ def loading_screen():
     SCREEN.blit(background, (0, 0))
     SCREEN.blit(loading, (170, -50))
     pygame.display.flip()
-    questions = open_trivia_db.gen_normal_mode()
-    return play_menu(questions)
+    if mode == "classic":
+        questions = open_trivia_db.gen_normal_mode()
+    elif mode == "endless":
+        if len(categories) == 0:
+            questions = open_trivia_db.gen_endless_mode(difficulty=difficulty)
+        else:
+            questions = open_trivia_db.gen_endless_mode(categories, difficulty)
+    return play_menu(questions, mode)
+    
     
 def answer_clicked(button, is_correct):
     answer_surface = pygame.image.load("answer_button.png")
@@ -105,7 +112,7 @@ def display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_b
     audience_poll_button.update(SCREEN)
     pygame.display.flip()
 
-def play_menu(questions):
+def play_menu(questions, mode):
     # Load background image
     background = pygame.image.load("background.jpg")
     background = pygame.transform.scale(background, (1920, 1080))
@@ -148,8 +155,12 @@ def play_menu(questions):
 
     display_next_question(question, button1, button2, button3, button4)
 
-    display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
-    display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+    if mode == "classic":
+        display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
+        display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+    else :
+        display_text("Score : " + str(current_question * 100), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+
 
     # Main game loop
     running = True
@@ -172,7 +183,7 @@ def play_menu(questions):
                     answer_clicked(button1, is_correct)
                     if is_correct:
                         current_question += 1
-                        if current_question > 14:
+                        if current_question > 14 and mode == "classic":
                             return win_screen()
                         question = questions[current_question]
                         answers = question["answers"]
@@ -180,19 +191,22 @@ def play_menu(questions):
                         SCREEN.blit(template, (150, 680))
                         pygame.display.flip()
                         display_next_question(question, button1, button2, button3, button4)
-                        display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
-                        display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+                        if mode == "classic":
+                            display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
+                            display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+                        else:
+                            display_text("Score : " + str(current_question * 100), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
                         display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_button)
                         pygame.event.clear()
                     else :
                         pygame.event.clear()
-                        return lose_screen()
+                        return lose_screen(mode)
                 elif button2.check_for_input(MOUSE_POS):
                     is_correct = open_trivia_db.correct_answer(question, answers[1])
                     answer_clicked(button2, is_correct)
                     if is_correct:
                         current_question += 1
-                        if current_question > 14:
+                        if current_question > 14 and mode == "classic":
                             return win_screen()
                         question = questions[current_question]
                         answers = question["answers"]
@@ -200,19 +214,22 @@ def play_menu(questions):
                         SCREEN.blit(template, (150, 680))
                         pygame.display.flip()
                         display_next_question(question, button1, button2, button3, button4)
-                        display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
-                        display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+                        if mode == "classic":
+                            display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
+                            display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+                        else:
+                            display_text("Score : " + str(current_question * 100), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
                         display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_button)
                         pygame.event.clear()
                     else:
                         pygame.event.clear()
-                        return lose_screen()
+                        return lose_screen(mode)
                 elif button3.check_for_input(MOUSE_POS):
                     is_correct = open_trivia_db.correct_answer(question, answers[2])
                     answer_clicked(button3, is_correct)
                     if is_correct:
                         current_question += 1
-                        if current_question > 14:
+                        if current_question > 14 and mode == "classic":
                             return win_screen()
                         question = questions[current_question]
                         answers = question["answers"]
@@ -220,19 +237,22 @@ def play_menu(questions):
                         SCREEN.blit(template, (150, 680))
                         pygame.display.flip()
                         display_next_question(question, button1, button2, button3, button4)
-                        display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
-                        display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+                        if mode == "classic":
+                            display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
+                            display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+                        else:
+                            display_text("Score : " + str(current_question * 100), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
                         display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_button)
                         pygame.event.clear()
                     else :
                         pygame.event.clear()
-                        return lose_screen()
+                        return lose_screen(mode)
                 elif button4.check_for_input(MOUSE_POS):
                     is_correct = open_trivia_db.correct_answer(question, answers[3])
                     answer_clicked(button4, is_correct)
                     if is_correct:
                         current_question += 1
-                        if current_question > 14:
+                        if current_question > 14 and mode == "classic":
                             return win_screen()
                         question = questions[current_question]
                         answers = question["answers"]
@@ -240,13 +260,16 @@ def play_menu(questions):
                         SCREEN.blit(template, (150, 680))
                         pygame.display.flip()
                         display_next_question(question, button1, button2, button3, button4)
-                        display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
-                        display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+                        if mode == "classic":
+                            display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
+                            display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
+                        else:
+                            display_text("Score : " + str(current_question * 100), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
                         display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_button)
                         pygame.event.clear()
                     else :
                         pygame.event.clear()
-                        return lose_screen()
+                        return lose_screen(mode)
                 elif fifty_fifty_button.check_for_input(MOUSE_POS) and not fifty_fifty_button.used:
                     fifty_fifty_button.used = True
                     used_surface = pygame.image.load("used_fifty-fifty.png")
@@ -303,7 +326,200 @@ def win_screen():
                     pygame.event.clear()
                     return main_menu()   
 
-def lose_screen():
+def choose_game_mode_screen():
+    background = pygame.image.load("main_menu_bg.webp")
+    background = pygame.transform.scale(background, (1920, 1080))
+    SCREEN.blit(background, (0, 0))
+
+    display_text("Choose difficulty:", pygame.font.Font(None, 75), "white", (740, 100))
+    display_text("Choose categories:", pygame.font.Font(None, 75), "white", (730, 300))
+    
+    button_surface = pygame.image.load("button.png")
+    button_surface = pygame.transform.scale(button_surface, (450, 100))
+
+    play_button = button.Button(button_surface, 960, 770, "PLAY", pygame.font.Font(None, 50))
+    back_button = button.Button(button_surface, 960, 890, "BACK TO MAIN MENU", pygame.font.Font(None, 50))
+
+    easy_button = button.Button(button_surface, 460, 220, "EASY", pygame.font.Font(None, 50))
+    normal_button = button.Button(button_surface, 960, 220, "NORMAL", pygame.font.Font(None, 50))
+    hard_button = button.Button(button_surface, 1460, 220, "HARD", pygame.font.Font(None, 50))
+
+
+    history_button = button.Button(button_surface, 460, 420, "History", pygame.font.Font(None, 50))
+    geography_button = button.Button(button_surface, 960, 420, "Geography", pygame.font.Font(None, 50))
+    computer_science_button = button.Button(button_surface, 1460, 420, "Computer Science", pygame.font.Font(None, 50))
+    sports_button = button.Button(button_surface, 460, 540, "Sports", pygame.font.Font(None, 50))
+    vehicles_button = button.Button(button_surface, 960, 540, "Vehicles", pygame.font.Font(None, 50))
+    music_button = button.Button(button_surface, 1460, 540, "Music", pygame.font.Font(None, 50))
+
+    history_button.update(SCREEN)
+    geography_button.update(SCREEN)
+    computer_science_button.update(SCREEN)
+    sports_button.update(SCREEN)
+    vehicles_button.update(SCREEN)
+    music_button.update(SCREEN)
+    easy_button.update(SCREEN)
+    normal_button.update(SCREEN)
+    hard_button.update(SCREEN)
+    back_button.update(SCREEN)
+    play_button.update(SCREEN)
+    pygame.display.flip()
+
+    difficulty = ""
+    categories = []
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            MOUSE_POS = pygame.mouse.get_pos()
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if back_button.check_for_input(MOUSE_POS):
+                    pygame.event.clear()
+                    return main_menu()
+                elif play_button.check_for_input(MOUSE_POS):
+                    return loading_screen("endless", categories, difficulty)
+                elif easy_button.check_for_input(MOUSE_POS) and not easy_button.used:
+                    difficulty = "easy"
+                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.transform.scale(used_surface, (450, 100))
+                    normal_button.used = False
+                    normal_button.change_image(button_surface)
+                    hard_button.used = False
+                    hard_button.change_image(button_surface)
+                    easy_button.used = True
+                    easy_button.change_image(used_surface)
+                    easy_button.update(SCREEN)
+                    pygame.display.flip()
+                    pygame.event.clear()
+                elif normal_button.check_for_input(MOUSE_POS) and not normal_button.used:
+                    difficulty = "medium"
+                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.transform.scale(used_surface, (450, 100))
+                    easy_button.used = False
+                    easy_button.change_image(button_surface)
+                    hard_button.used = False
+                    hard_button.change_image(button_surface)
+                    normal_button.used = True
+                    normal_button.change_image(used_surface)
+                    normal_button.update(SCREEN)
+                    pygame.display.flip()
+                    pygame.event.clear()
+                elif hard_button.check_for_input(MOUSE_POS) and not hard_button.used:
+                    difficulty = "hard"
+                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.transform.scale(used_surface, (450, 100))
+                    easy_button.used = False
+                    easy_button.change_image(button_surface)
+                    normal_button.used = False
+                    normal_button.change_image(button_surface)
+                    hard_button.used = True
+                    hard_button.change_image(used_surface)
+                    hard_button.update(SCREEN)
+                    pygame.display.flip()
+                    pygame.event.clear()
+                elif history_button.check_for_input(MOUSE_POS):
+                    if (history_button.used):
+                        categories.remove(history_button.text_input)
+                    else:
+                        categories.append(history_button.text_input)
+                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.transform.scale(used_surface, (450, 100))
+                    history_button.used = not history_button.used
+                    history_button.change_image(used_surface if history_button.used else button_surface)
+                    history_button.update(SCREEN)
+                    pygame.display.flip()
+                    pygame.event.clear()
+                elif geography_button.check_for_input(MOUSE_POS):
+                    if (geography_button.used):
+                        categories.remove(geography_button.text_input)
+                    else:
+                        categories.append(geography_button.text_input)
+                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.transform.scale(used_surface, (450, 100))
+                    geography_button.used = not geography_button.used
+                    geography_button.change_image(used_surface if geography_button.used else button_surface)
+                    geography_button.update(SCREEN)
+                    pygame.display.flip()
+                    pygame.event.clear()
+                elif computer_science_button.check_for_input(MOUSE_POS):
+                    if (computer_science_button.used):
+                        categories.remove(computer_science_button.text_input)
+                    else:
+                        categories.append(computer_science_button.text_input)
+                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.transform.scale(used_surface, (450, 100))
+                    computer_science_button.used = not computer_science_button.used
+                    computer_science_button.change_image(used_surface if computer_science_button.used else button_surface)
+                    computer_science_button.update(SCREEN)
+                    pygame.display.flip()
+                    pygame.event.clear()
+                elif sports_button.check_for_input(MOUSE_POS):
+                    if (sports_button.used):
+                        categories.remove(sports_button.text_input)
+                    else:
+                        categories.append(sports_button.text_input)
+                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.transform.scale(used_surface, (450, 100))
+                    sports_button.used = not sports_button.used
+                    sports_button.change_image(used_surface if sports_button.used else button_surface)
+                    sports_button.update(SCREEN)
+                    pygame.display.flip()
+                    pygame.event.clear()
+                elif vehicles_button.check_for_input(MOUSE_POS):
+                    if (vehicles_button.used):
+                        categories.remove(vehicles_button.text_input)
+                    else:
+                        categories.append(vehicles_button.text_input)
+                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.transform.scale(used_surface, (450, 100))
+                    vehicles_button.used = not vehicles_button.used
+                    vehicles_button.change_image(used_surface if vehicles_button.used else button_surface)
+                    vehicles_button.update(SCREEN)
+                    pygame.display.flip()
+                    pygame.event.clear()
+                elif music_button.check_for_input(MOUSE_POS):
+                    if (music_button.used):
+                        categories.remove(music_button.text_input)
+                    else:
+                        categories.append(music_button.text_input)
+                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.transform.scale(used_surface, (450, 100))
+                    music_button.used = not music_button.used
+                    music_button.change_image(used_surface if music_button.used else button_surface)
+                    music_button.update(SCREEN)
+                    pygame.display.flip()
+                    pygame.event.clear()
+                
+        # Update buttons
+        play_button.update(SCREEN)
+        play_button.change_color(pygame.mouse.get_pos())
+        back_button.update(SCREEN)
+        back_button.change_color(pygame.mouse.get_pos())
+        easy_button.update(SCREEN)
+        easy_button.change_color(pygame.mouse.get_pos())
+        normal_button.update(SCREEN)
+        normal_button.change_color(pygame.mouse.get_pos())
+        hard_button.update(SCREEN)
+        hard_button.change_color(pygame.mouse.get_pos())
+        history_button.update(SCREEN)
+        history_button.change_color(pygame.mouse.get_pos())
+        geography_button.update(SCREEN)
+        geography_button.change_color(pygame.mouse.get_pos())
+        computer_science_button.update(SCREEN)
+        computer_science_button.change_color(pygame.mouse.get_pos())
+        sports_button.update(SCREEN)
+        sports_button.change_color(pygame.mouse.get_pos())
+        vehicles_button.update(SCREEN)
+        vehicles_button.change_color(pygame.mouse.get_pos())
+        music_button.update(SCREEN)
+        music_button.change_color(pygame.mouse.get_pos())
+        pygame.display.flip()
+
+def lose_screen(mode):
     background = pygame.image.load("background.jpg")
     background = pygame.transform.scale(background, (1920, 1080))
     lose = pygame.image.load("lost.png")
@@ -315,7 +531,8 @@ def lose_screen():
     button_surface = pygame.transform.scale(button_surface, (530, 150))
     retry_button = button.Button(button_surface, 960, 710, "Try again", pygame.font.Font(None, 50))
     back_button = button.Button(button_surface, 960, 810, "Back to main menu", pygame.font.Font(None, 50))
-    retry_button.update(SCREEN)
+    if mode == "classic":
+        retry_button.update(SCREEN)
     back_button.update(SCREEN)
     pygame.display.flip()
     while True:
@@ -328,17 +545,17 @@ def lose_screen():
                 if back_button.check_for_input(pygame.mouse.get_pos()):
                     pygame.event.clear()
                     return main_menu()
-                elif retry_button.check_for_input(pygame.mouse.get_pos()):
+                elif retry_button.check_for_input(pygame.mouse.get_pos()) and mode == "classic":
                     pygame.event.clear()
-                    return loading_screen()
+                    return loading_screen("classic")
 
 def main_menu():
-
     button_surface = pygame.image.load("button.png")
     button_surface = pygame.transform.scale(button_surface, (530, 100))
 
-    play_button = button.Button(button_surface, 960, 740, "PLAY", pygame.font.Font(None, 50))
-    exit_button = button.Button(button_surface, 960, 850, "EXIT", pygame.font.Font(None, 50))
+    play_button = button.Button(button_surface, 960, 550, "PLAY CLASSIC", pygame.font.Font(None, 50))
+    endless_button = button.Button(button_surface, 960, 670, "ENDLESS MODE", pygame.font.Font(None, 50))
+    exit_button = button.Button(button_surface, 960, 790, "EXIT", pygame.font.Font(None, 50))
 
     background = pygame.image.load("main_menu_bg.webp")
     background = pygame.transform.scale(background, (1920, 1080))
@@ -363,17 +580,21 @@ def main_menu():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.check_for_input(MOUSE_POS):
                     pygame.event.clear()
-                    return loading_screen()
+                    return loading_screen("classic")
                 elif exit_button.check_for_input(MOUSE_POS):
                     pygame.event.clear()
                     pygame.quit()
+                elif endless_button.check_for_input(MOUSE_POS):
+                    pygame.event.clear()
+                    return choose_game_mode_screen()
     
         play_button.update(SCREEN)
         play_button.change_color(pygame.mouse.get_pos())
         exit_button.update(SCREEN)
         exit_button.change_color(pygame.mouse.get_pos())
+        endless_button.update(SCREEN)
+        endless_button.change_color(pygame.mouse.get_pos())
         pygame.display.flip()
 
 if __name__ == "__main__":
-    # 
-    win_screen()
+    main_menu()
