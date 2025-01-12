@@ -25,10 +25,10 @@ TEXT_BOX = (400, 680, 1100, 90)
 # Initialize pygame
 pygame.init()
 pygame.mixer.init()
-wrong_answer = pygame.mixer.Sound("wrong_answer.mp3")
-correct_answer = pygame.mixer.Sound("correct_answer.mp3")
-final_answer = pygame.mixer.Sound("final_answer.mp3")
-question_sound = pygame.mixer.Sound("question_sound.mp3")
+wrong_answer = pygame.mixer.Sound("audio/wrong_answer.mp3")
+correct_answer = pygame.mixer.Sound("audio/correct_answer.mp3")
+final_answer = pygame.mixer.Sound("audio/final_answer.mp3")
+question_sound = pygame.mixer.Sound("audio/question_sound.mp3")
 
 # Screen settings
 SCREEN = pygame.display.set_mode((1920, 1080))
@@ -45,12 +45,12 @@ def loading_screen(mode, categories=None, difficulty=None):
     Returns:
         list: A list of questions generated based on the selected mode.
     """
-    pygame.mixer.music.load("main_menu_song.mp3")
+    pygame.mixer.music.load("audio/main_menu_song.mp3")
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
-    background = pygame.image.load("background.jpg")
+    background = pygame.image.load("assets/background.jpg")
     background = pygame.transform.scale(background, (1920, 1080))
-    loading = pygame.image.load("loading.png")
+    loading = pygame.image.load("assets/loading.png")
     loading = pygame.transform.scale(loading, (1200, 800))
     SCREEN.blit(background, (0, 0))
     SCREEN.blit(loading, (170, -50))
@@ -83,13 +83,13 @@ def answer_clicked(button, is_correct):
     6. Changes the button image to the final correct/incorrect state and waits for 1.8 seconds.
     7. Resets the button image to the original state.
     """
-    answer_surface = pygame.image.load("answer_button.png")
+    answer_surface = pygame.image.load("assets/answer_button.png")
     answer_surface = pygame.transform.scale(answer_surface, (615, 50))
-    waiting_surface = pygame.image.load("waiting_answer_button.png")
+    waiting_surface = pygame.image.load("assets/waiting_answer_button.png")
     waiting_surface = pygame.transform.scale(waiting_surface, (615, 50))
-    correct_surface = pygame.image.load("correct_answer_button.png")
+    correct_surface = pygame.image.load("assets/correct_answer_button.png")
     correct_surface = pygame.transform.scale(correct_surface, (615, 50))
-    incorrect_surface = pygame.image.load("wrong_answer_button.png")
+    incorrect_surface = pygame.image.load("assets/wrong_answer_button.png")
     incorrect_surface = pygame.transform.scale(incorrect_surface, (615, 50))
     button.change_image(waiting_surface)
     button.update(SCREEN)
@@ -177,11 +177,11 @@ def display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_b
 
 def play_menu(questions, mode):
     # Load background image
-    background = pygame.image.load("background.jpg")
+    background = pygame.image.load("assets/background.jpg")
     background = pygame.transform.scale(background, (1920, 1080))
 
     # Load template image
-    template = pygame.image.load("template.png")
+    template = pygame.image.load("assets/template.png")
     template = pygame.transform.scale(template, (1600, 206))
 
     SCREEN.blit(background, (0, 0))
@@ -192,7 +192,7 @@ def play_menu(questions, mode):
     question = questions[current_question]
     answers = question["answers"]
 
-    answer_button_surface = pygame.image.load("answer_button.png")
+    answer_button_surface = pygame.image.load("assets/answer_button.png")
     answer_button_surface = pygame.transform.scale(answer_button_surface, (615, 50))
 
     button1 = button.Button(answer_button_surface, 645, 805, answers[0], pygame.font.Font(None, 40))
@@ -200,11 +200,11 @@ def play_menu(questions, mode):
     button3 = button.Button(answer_button_surface, 645, 860, answers[2], pygame.font.Font(None, 40))
     button4 = button.Button(answer_button_surface, 1260, 860, answers[3], pygame.font.Font(None, 40))
 
-    fifty_fifty_surface = pygame.image.load("fifty-fifty.png")
+    fifty_fifty_surface = pygame.image.load("assets/fifty-fifty.png")
     fifty_fifty_surface = pygame.transform.scale(fifty_fifty_surface, (100, 100))
-    phone_a_friend_surface = pygame.image.load("phone-a-friend.png")
+    phone_a_friend_surface = pygame.image.load("assets/phone-a-friend.png")
     phone_a_friend_surface = pygame.transform.scale(phone_a_friend_surface, (100, 100))
-    audience_poll_surface = pygame.image.load("ask-the-audience.png")
+    audience_poll_surface = pygame.image.load("assets/ask-the-audience.png")
     audience_poll_surface = pygame.transform.scale(audience_poll_surface, (100, 100))
 
     fifty_fifty_button = button.Button(fifty_fifty_surface, 400, 200, "", pygame.font.Font(None, 50))
@@ -335,7 +335,7 @@ def play_menu(questions, mode):
                         return lose_screen(mode)
                 elif fifty_fifty_button.check_for_input(MOUSE_POS) and not fifty_fifty_button.used:
                     fifty_fifty_button.used = True
-                    used_surface = pygame.image.load("used_fifty-fifty.png")
+                    used_surface = pygame.image.load("assets/used_fifty-fifty.png")
                     used_surface = pygame.transform.scale(used_surface, (100, 100))
                     fifty_fifty_button.change_image(used_surface)
                     question = open_trivia_db.fifty_fifty(question)
@@ -346,23 +346,15 @@ def play_menu(questions, mode):
                     pygame.event.clear()
                 elif phone_a_friend_button.check_for_input(MOUSE_POS) and not phone_a_friend_button.used:
                     phone_a_friend_button.used = True
-                    used_surface = pygame.image.load("used_phone-a-friend.png")
+                    used_surface = pygame.image.load("assets/used_phone-a-friend.png")
                     used_surface = pygame.transform.scale(used_surface, (100, 100))
                     phone_a_friend_button.change_image(used_surface)
                     button.render_text_box(SCREEN, "Your friend says the correct answer is: ", (450, 530, 1000, 100))
-                    # display_text(,
-                    #                 pygame.font.Font("freesansbold.ttf", 40),
-                    #                 "white",
-                    #                 (550, 600))
                     button.render_text_box(SCREEN, open_trivia_db.phone_a_friend(question), (450, 580, 1000, 100))
-                    # display_text(open_trivia_db.phone_a_friend(question),
-                    #                 pygame.font.Font("freesansbold.ttf", 40),
-                    #                 "white",
-                    #                 (550, 650))
                     pygame.event.clear()
                 elif audience_poll_button.check_for_input(MOUSE_POS) and not audience_poll_button.used:
                     audience_poll_button.used = True
-                    used_surface = pygame.image.load("used_ask-the-audience.png")
+                    used_surface = pygame.image.load("assets/used_ask-the-audience.png")
                     used_surface = pygame.transform.scale(used_surface, (100, 100))
                     audience_poll_button.change_image(used_surface)
                     
@@ -378,17 +370,17 @@ def play_menu(questions, mode):
                     
 
 def win_screen():
-    pygame.mixer.music.load("win_song.mp3")
+    pygame.mixer.music.load("audio/win_song.mp3")
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
-    background = pygame.image.load("background.jpg")
+    background = pygame.image.load("assets/background.jpg")
     background = pygame.transform.scale(background, (1920, 1080))
-    win = pygame.image.load("win.png")
+    win = pygame.image.load("assets/win.png")
     win = pygame.transform.scale(win, (1500, 1000))
     SCREEN.blit(background, (0, 0))
     SCREEN.blit(win, (210, 70))
     pygame.display.flip()
-    button_surface = pygame.image.load("exit_button.webp")
+    button_surface = pygame.image.load("assets/exit_button.webp")
     button_surface = pygame.transform.scale(button_surface, (530, 150))
     back_button = button.Button(button_surface, 960, 840, "Back to main menu", pygame.font.Font(None, 50))
     back_button.update(SCREEN)
@@ -407,14 +399,14 @@ def win_screen():
                     return main_menu()   
 
 def choose_game_mode_screen():
-    background = pygame.image.load("main_menu_bg.webp")
+    background = pygame.image.load("assets/main_menu_bg.webp")
     background = pygame.transform.scale(background, (1920, 1080))
     SCREEN.blit(background, (0, 0))
 
     display_text("Choose difficulty:", pygame.font.Font(None, 75), "white", (740, 100))
     display_text("Choose categories:", pygame.font.Font(None, 75), "white", (730, 300))
     
-    button_surface = pygame.image.load("button.png")
+    button_surface = pygame.image.load("assets/button.png")
     button_surface = pygame.transform.scale(button_surface, (450, 100))
 
     play_button = button.Button(button_surface, 960, 770, "PLAY", pygame.font.Font(None, 50))
@@ -464,7 +456,7 @@ def choose_game_mode_screen():
                     return loading_screen("endless", categories, difficulty)
                 elif easy_button.check_for_input(MOUSE_POS) and not easy_button.used:
                     difficulty = "easy"
-                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.image.load("assets/used_button.png")
                     used_surface = pygame.transform.scale(used_surface, (450, 100))
                     normal_button.used = False
                     normal_button.change_image(button_surface)
@@ -477,7 +469,7 @@ def choose_game_mode_screen():
                     pygame.event.clear()
                 elif normal_button.check_for_input(MOUSE_POS) and not normal_button.used:
                     difficulty = "medium"
-                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.image.load("assets/used_button.png")
                     used_surface = pygame.transform.scale(used_surface, (450, 100))
                     easy_button.used = False
                     easy_button.change_image(button_surface)
@@ -490,7 +482,7 @@ def choose_game_mode_screen():
                     pygame.event.clear()
                 elif hard_button.check_for_input(MOUSE_POS) and not hard_button.used:
                     difficulty = "hard"
-                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.image.load("assets/used_button.png")
                     used_surface = pygame.transform.scale(used_surface, (450, 100))
                     easy_button.used = False
                     easy_button.change_image(button_surface)
@@ -506,7 +498,7 @@ def choose_game_mode_screen():
                         categories.remove(history_button.text_input)
                     else:
                         categories.append(history_button.text_input)
-                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.image.load("assets/used_button.png")
                     used_surface = pygame.transform.scale(used_surface, (450, 100))
                     history_button.used = not history_button.used
                     history_button.change_image(used_surface if history_button.used else button_surface)
@@ -518,7 +510,7 @@ def choose_game_mode_screen():
                         categories.remove(geography_button.text_input)
                     else:
                         categories.append(geography_button.text_input)
-                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.image.load("assets/used_button.png")
                     used_surface = pygame.transform.scale(used_surface, (450, 100))
                     geography_button.used = not geography_button.used
                     geography_button.change_image(used_surface if geography_button.used else button_surface)
@@ -530,7 +522,7 @@ def choose_game_mode_screen():
                         categories.remove(computer_science_button.text_input)
                     else:
                         categories.append(computer_science_button.text_input)
-                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.image.load("assets/used_button.png")
                     used_surface = pygame.transform.scale(used_surface, (450, 100))
                     computer_science_button.used = not computer_science_button.used
                     computer_science_button.change_image(used_surface if computer_science_button.used else button_surface)
@@ -542,7 +534,7 @@ def choose_game_mode_screen():
                         categories.remove(sports_button.text_input)
                     else:
                         categories.append(sports_button.text_input)
-                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.image.load("assets/used_button.png")
                     used_surface = pygame.transform.scale(used_surface, (450, 100))
                     sports_button.used = not sports_button.used
                     sports_button.change_image(used_surface if sports_button.used else button_surface)
@@ -554,7 +546,7 @@ def choose_game_mode_screen():
                         categories.remove(vehicles_button.text_input)
                     else:
                         categories.append(vehicles_button.text_input)
-                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.image.load("assets/used_button.png")
                     used_surface = pygame.transform.scale(used_surface, (450, 100))
                     vehicles_button.used = not vehicles_button.used
                     vehicles_button.change_image(used_surface if vehicles_button.used else button_surface)
@@ -566,7 +558,7 @@ def choose_game_mode_screen():
                         categories.remove(music_button.text_input)
                     else:
                         categories.append(music_button.text_input)
-                    used_surface = pygame.image.load("used_button.png")
+                    used_surface = pygame.image.load("assets/used_button.png")
                     used_surface = pygame.transform.scale(used_surface, (450, 100))
                     music_button.used = not music_button.used
                     music_button.change_image(used_surface if music_button.used else button_surface)
@@ -600,14 +592,14 @@ def choose_game_mode_screen():
         pygame.display.flip()
 
 def lose_screen(mode):
-    background = pygame.image.load("background.jpg")
+    background = pygame.image.load("assets/background.jpg")
     background = pygame.transform.scale(background, (1920, 1080))
-    lose = pygame.image.load("lost.png")
+    lose = pygame.image.load("assets/lost.png")
     lose = pygame.transform.scale(lose, (1200, 500))
     SCREEN.blit(background, (0, 0))
     SCREEN.blit(lose, (390, 180))
     pygame.display.flip()
-    button_surface = pygame.image.load("exit_button.webp")
+    button_surface = pygame.image.load("assets/exit_button.webp")
     button_surface = pygame.transform.scale(button_surface, (530, 150))
     retry_button = button.Button(button_surface, 960, 710, "Try again", pygame.font.Font(None, 50))
     back_button = button.Button(button_surface, 960, 810, "Back to main menu", pygame.font.Font(None, 50))
@@ -630,21 +622,21 @@ def lose_screen(mode):
                     return loading_screen("classic")
 
 def main_menu():
-    pygame.mixer.music.load("main_menu_song.mp3")
+    pygame.mixer.music.load("audio/main_menu_song.mp3")
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play()
     
-    button_surface = pygame.image.load("button.png")
+    button_surface = pygame.image.load("assets/button.png")
     button_surface = pygame.transform.scale(button_surface, (530, 100))
 
     play_button = button.Button(button_surface, 960, 550, "PLAY CLASSIC", pygame.font.Font(None, 50))
     endless_button = button.Button(button_surface, 960, 670, "ENDLESS MODE", pygame.font.Font(None, 50))
     exit_button = button.Button(button_surface, 960, 790, "EXIT", pygame.font.Font(None, 50))
 
-    background = pygame.image.load("main_menu_bg.webp")
+    background = pygame.image.load("assets/main_menu_bg.webp")
     background = pygame.transform.scale(background, (1920, 1080))
 
-    title = pygame.image.load("title.png")
+    title = pygame.image.load("assets/title.png")
     title = pygame.transform.scale(title, (2000, 1000))
 
     SCREEN.blit(background, (0, 0))
