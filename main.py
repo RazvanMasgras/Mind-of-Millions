@@ -362,9 +362,9 @@ def main_menu():
                     pygame.quit()
     
         play_button.update(SCREEN)
-        play_button.change_color(MOUSE_POS)
+        play_button.change_color(pygame.mouse.get_pos())
         exit_button.update(SCREEN)
-        exit_button.change_color(MOUSE_POS)
+        exit_button.change_color(pygame.mouse.get_pos())
         pygame.display.flip()
 
 if __name__ == "__main__":
