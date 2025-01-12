@@ -9,6 +9,9 @@ class NoResponseException(Exception):
         super().__init__(self.message)
 
 
+cache = []
+
+
 CATEGORIES = {
     "General Knowledge": 9,
     "Entertainment: Books": 10,
@@ -76,18 +79,51 @@ def prepare_questions(questions):
     return questions
 
 
+def cache_questions(categories=None, difficulty=None):
+    questions = []
+
+    if categories is None:
+        while True:
+            try:
+                questions.extend(fetch_trivia_questions(questions=50, difficulty=difficulty))
+                break
+            except NoResponseException:
+                continue
+    else:
+        for category in categories:
+            while True:
+                try:
+                    questions.extend(fetch_trivia_questions(questions=50, category=category, difficulty=difficulty))
+                    break
+                except NoResponseException:
+                    continue
+
+    questions = prepare_questions(questions)
+    cache.extend(questions)
+
+
+def get_questions_from_cache(difficulty, count):
+    filtered_questions = [q for q in cache if q['difficulty'] == difficulty]
+
+    while len(filtered_questions) < count:
+        cache_questions(difficulty=difficulty)
+        filtered_questions = [q for q in cache if q['difficulty'] == difficulty]
+
+    selected_questions = filtered_questions[:count]
+    for q in selected_questions:
+        cache.remove(q)
+
+    return selected_questions
+
+
 def gen_normal_mode():
     questions = []
 
-    for difficulty in ["easy", "medium", "hard"]:
-        while True:
-            try:
-                questions.extend(fetch_trivia_questions(questions=5, difficulty=difficulty))
-                break
-            except NoResponseException as e:
-                continue
+    questions.extend(get_questions_from_cache("easy", 5))
+    questions.extend(get_questions_from_cache("medium", 5))
+    questions.extend(get_questions_from_cache("hard", 5))
 
-    return prepare_questions(questions)
+    return questions
 
 
 def gen_endless_mode(categories=None, difficulty=None):
@@ -101,7 +137,7 @@ def gen_endless_mode(categories=None, difficulty=None):
                 try:
                     questions.extend(fetch_trivia_questions(questions=10, category=category, difficulty=difficulty))
                     break
-                except NoResponseException as e:
+                except NoResponseException:
                     continue
 
     random.shuffle(questions)
@@ -154,7 +190,7 @@ def change_question(questions, question):
         try:
             new_question = fetch_trivia_questions(questions=1, difficulty=question["difficulty"])[0]
             break
-        except NoResponseException as exception:
+        except NoResponseException:
             continue
 
     questions[questions.index(question)] = new_question
