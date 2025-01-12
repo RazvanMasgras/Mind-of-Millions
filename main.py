@@ -153,9 +153,9 @@ def play_menu(questions):
     while running:
         button.render_text_box(SCREEN, question["question"], TEXT_BOX)
         pygame.display.flip()
-        MOUSE_POS = pygame.mouse.get_pos()
 
         for event in pygame.event.get():
+            MOUSE_POS = pygame.mouse.get_pos()
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -179,7 +179,9 @@ def play_menu(questions):
                         display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
                         display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
                         display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_button)
+                        pygame.event.clear()
                     else :
+                        pygame.event.clear()
                         return lose_screen()
                 elif button2.check_for_input(MOUSE_POS):
                     is_correct = open_trivia_db.correct_answer(question, answers[1])
@@ -197,7 +199,9 @@ def play_menu(questions):
                         display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
                         display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
                         display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_button)
+                        pygame.event.clear()
                     else:
+                        pygame.event.clear()
                         return lose_screen()
                 elif button3.check_for_input(MOUSE_POS):
                     is_correct = open_trivia_db.correct_answer(question, answers[2])
@@ -215,7 +219,9 @@ def play_menu(questions):
                         display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
                         display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
                         display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_button)
+                        pygame.event.clear()
                     else :
+                        pygame.event.clear()
                         return lose_screen()
                 elif button4.check_for_input(MOUSE_POS):
                     is_correct = open_trivia_db.correct_answer(question, answers[3])
@@ -233,7 +239,9 @@ def play_menu(questions):
                         display_text("Current prize: $" + str(PRIZES[current_question]), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 80))
                         display_text("Next win: $" + str(PRIZES[current_question + 1]), pygame.font.Font("freesansbold.ttf", 70), "white", (750, 130))
                         display_lifelines(fifty_fifty_button, phone_a_friend_button, audience_poll_button)
+                        pygame.event.clear()
                     else :
+                        pygame.event.clear()
                         return lose_screen()
                 elif fifty_fifty_button.check_for_input(MOUSE_POS) and not fifty_fifty_button.used:
                     fifty_fifty_button.used = True
@@ -245,12 +253,14 @@ def play_menu(questions):
                         b.change_text(question["answers"][i])
                         b.update(SCREEN)
                         pygame.display.flip()
+                    pygame.event.clear()
                 elif phone_a_friend_button.check_for_input(MOUSE_POS) and not phone_a_friend_button.used:
                     phone_a_friend_button.used = True
                     used_surface = pygame.image.load("used_phone-a-friend.png")
                     used_surface = pygame.transform.scale(used_surface, (100, 100))
                     phone_a_friend_button.change_image(used_surface)
                     display_text("Your friend says: " + open_trivia_db.phone_a_friend(question), pygame.font.Font("freesansbold.ttf", 50), "white", (750, 200))
+                    pygame.event.clear()
                 elif audience_poll_button.check_for_input(MOUSE_POS) and not audience_poll_button.used:
                     audience_poll_button.used = True
                     used_surface = pygame.image.load("used_ask-the-audience.png")
@@ -260,6 +270,7 @@ def play_menu(questions):
                     display_text("Audience poll results:", pygame.font.Font("freesansbold.ttf", 50), "white", (750, 200))
                     for answer, weight in weights.items():
                         display_text(answer + ": " + str(weight) + "%", pygame.font.Font("freesansbold.ttf", 50), "white", (750, 250 + list(weights.keys()).index(answer) * 50))
+                    pygame.event.clear()
 
 def win_screen():
     background = pygame.image.load("background.jpg")
@@ -282,6 +293,7 @@ def win_screen():
                 return main_menu()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.check_for_input(pygame.mouse.get_pos()):
+                    pygame.event.clear()
                     return main_menu()   
 
 def lose_screen():
@@ -307,8 +319,10 @@ def lose_screen():
                 return main_menu()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.check_for_input(pygame.mouse.get_pos()):
+                    pygame.event.clear()
                     return main_menu()
                 elif retry_button.check_for_input(pygame.mouse.get_pos()):
+                    pygame.event.clear()
                     return loading_screen()
 
 def main_menu():
@@ -331,20 +345,20 @@ def main_menu():
 
     running = True
     while running: 
-        MOUSE_POS = pygame.mouse.get_pos()
 
         for event in pygame.event.get():
+            MOUSE_POS = pygame.mouse.get_pos()
             if event.type == pygame.QUIT:
                 # Quit pygame
                 pygame.quit()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False  # Exit fullscreen with Escape
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                return play_menu()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.check_for_input(MOUSE_POS):
+                    pygame.event.clear()
                     return loading_screen()
                 elif exit_button.check_for_input(MOUSE_POS):
+                    pygame.event.clear()
                     pygame.quit()
     
         play_button.update(SCREEN)
